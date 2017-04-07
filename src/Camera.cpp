@@ -21,7 +21,7 @@ sf::Vector3f Camera::getPosition () const {
 
 void Camera::update(double delta_time){
     movement_delta *= (1.0f - friction);
-    position += movement_delta / (float)delta_time;
+    position += (movement_delta * (float)delta_time * 1000.0f);
 }
 
 void Camera::setDirection (sf::Vector2f direction){

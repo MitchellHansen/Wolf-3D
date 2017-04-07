@@ -27,7 +27,7 @@ int main() {
 	std::mt19937 rng(time(NULL));
 	std::uniform_int_distribution<int> rgen(100, 400);
 
-	sf::RenderWindow window(sf::VideoMode(600, 600), "quick-sfml-template");
+	sf::RenderWindow window(sf::VideoMode(800, 800), "quick-sfml-template");
 	//window.setFramerateLimit(60);
 
 
@@ -64,28 +64,42 @@ int main() {
 				
 			}
 			if (event.type == sf::Event::KeyPressed) {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-                    camera->giveImpulse(sf::Vector3f(-0.001, 0, 0), 1.0);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-                    camera->giveImpulse(sf::Vector3f(0, -0.001, 0), 1.0);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-                    camera->giveImpulse(sf::Vector3f(0.001, 0, 0), 1.0);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-                    camera->giveImpulse(sf::Vector3f(0, 0.001, 0), 1.0);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-                    camera->giveImpulse(sf::Vector3f(0, 0, 0.001), 1.0);
-                }
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
-                    camera->giveImpulse(sf::Vector3f(0, 0, -0.001), 1.0);
-                }
+
 			}
 			if (event.type == sf::Event::MouseButtonPressed) {
 
 			}
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			camera->giveImpulse(sf::Vector3f(-0.001, 0, 0), 1.0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+			camera->giveImpulse(sf::Vector3f(0, -0.001, 0), 1.0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			camera->giveImpulse(sf::Vector3f(0.001, 0, 0), 1.0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			camera->giveImpulse(sf::Vector3f(0, 0.001, 0), 1.0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+			camera->giveImpulse(sf::Vector3f(0, 0, 0.001), 1.0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+			camera->giveImpulse(sf::Vector3f(0, 0, -0.001), 1.0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			camera->moveDirection(sf::Vector2f(0, -0.1));
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+			camera->moveDirection(sf::Vector2f(0, 0.1));
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			camera->moveDirection(sf::Vector2f(0.1, 0));
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+			camera->moveDirection(sf::Vector2f(-0.1, 0));
 		}
 
 		elapsed_time = elap_time(); // Handle time
@@ -104,8 +118,11 @@ int main() {
 		}
 
 
-        camera->update(delta_time);
+        
 		raycaster.March();
+
+
+		camera->update(delta_time);
 
 		window.clear(sf::Color::White);
 

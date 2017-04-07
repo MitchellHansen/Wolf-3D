@@ -12,13 +12,7 @@ void Map::Init(sf::Vector3i dimensions){
 
     grid_dimensions = dimensions;
 
-    grid.resize(dimensions.x);
-    for (auto &x: grid) {
-        x.resize(dimensions.y);
-
-        for (auto &q: x)
-            q.resize(dimensions.z);
-    }
+	grid = new char[grid_dimensions.x * grid_dimensions.y * grid_dimensions.z];
 
     for (int x = 0; x < dimensions.x; ++x){
         for (int y = 0; y < dimensions.y; ++y){
@@ -50,13 +44,7 @@ bool Map::loadGrid(std::string filename){
     file.read((char*)&y_dim, sizeof(int));
     file.read((char*)&z_dim, sizeof(int));
 
-    grid.resize(x_dim);
-    for (auto &x: grid) {
-        x.resize(y_dim);
-
-        for (auto &q: x)
-            q.resize(z_dim);
-    }
+    grid = new char[x_dim * y_dim * z_dim];
 
     for (int x = 0; x < x_dim; ++x){
         for (int y = 0; y < y_dim; ++y){
@@ -81,17 +69,13 @@ void Map::saveGrid(std::string filename) {
         return;
     }
 
-    int x_dim = grid.size();
-    int y_dim = grid.at(0).size();
-    int z_dim = grid.at(0).at(0).size();
+    file.write((char*)&grid_dimensions.x, sizeof(int));
+    file.write((char*)&grid_dimensions.y, sizeof(int));
+    file.write((char*)&grid_dimensions.z, sizeof(int));
 
-    file.write((char*)&x_dim, sizeof(int));
-    file.write((char*)&y_dim, sizeof(int));
-    file.write((char*)&z_dim, sizeof(int));
-
-    for (int x = 0; x < x_dim; ++x){
-        for (int y = 0; y < y_dim; ++y){
-            for (int z = 0; z < z_dim; ++z) {
+    for (int x = 0; x < grid_dimensions.x; ++x){
+        for (int y = 0; y < grid_dimensions.y; ++y){
+            for (int z = 0; z < grid_dimensions.z; ++z) {
                 char val = getGrid(sf::Vector3i(x, y, z));
                 file.write(&val, sizeof(char));
             }
@@ -101,12 +85,14 @@ void Map::saveGrid(std::string filename) {
 
 void Map::setGrid(sf::Vector3i position, char value) {
 
-    grid.at(position.x).at(position.y).at(position.z) = value;
+	grid[position.x + grid_dimensions.x * (position.y + grid_dimensions.z * position.z)] = value;
+   // grid.at(position.x).at(position.y).at(position.z) = value;
 
 }
 char Map::getGrid(sf::Vector3i position){
 
-    return grid[position.x][position.y][position.z];
+	return grid[position.x + grid_dimensions.x * (position.y + grid_dimensions.z * position.z)];
+    //;return grid[position.x][position.y][position.z];
 
 }
 

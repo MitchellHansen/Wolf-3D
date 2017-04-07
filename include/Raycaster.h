@@ -7,7 +7,25 @@
 #include "Camera.h"
 #include "util.hpp"
 #include <thread>
+#include <cmath>
+#include <queue>
+#include <mutex>
 
+
+struct F_Vec4f {
+	
+	F_Vec4f(){}
+	F_Vec4f(sf::Vector4f in) : x(in.x), y(in.y), z(in.z), w(in.w) {}
+	void noCopy(float x, float y, float z, float w) {
+		this->x = x; this->y = y; this->z = z; this->w = w;
+	}
+
+	float x;
+	float y;
+	float z;
+	float w;
+
+};
 class Raycaster {
 
 public:
@@ -25,16 +43,17 @@ public:
 
     void Blit(sf::Color color, sf::Vector2i position, sf::Vector3i mask);
 
+
 private:
 
-    void MarchThread(sf::Vector2i start, sf::Vector2i end);
+    void MarchThread();
     void MarchSingle(sf::Vector2i start, sf::Vector2i end);
 
     sf::Vector2i viewport_resolution;
 
-    std::vector<sf::Vector4f> viewport_matrix;
+    sf::Vector4f *viewport_matrix;
 
-    std::vector<sf::Uint8> viewport_image;
+    sf::Uint8 *viewport_image;
     sf::Texture viewport_texture;
     sf::Sprite viewport_sprite;
 
@@ -46,6 +65,10 @@ private:
 
     std::vector<std::thread> thread_pool;
 
+	std::mutex queue_mutex;
+	std::queue<std::pair<sf::Vector2i, sf::Vector2i>> block_queue;
+
+	bool end_state = false;
 };
 
 

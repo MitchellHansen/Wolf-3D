@@ -35,15 +35,15 @@ int main() {
     camera->setPosition(sf::Vector3f(3.1f, 3.1f, 3.1f));
     camera->setDirection(sf::Vector2f(1.0f, 0.0f));
 
-    std::shared_ptr<Map> map(new Map);
+    Map *map = new Map;
 
     if (!map->loadGrid("grid.bin")){
-        map->Init(sf::Vector3i(12, 12, 5));
+        map->Init(sf::Vector3i(30, 50, 5));
     }
 
     Raycaster raycaster(map, camera);
 
-    raycaster.CreateViewport(sf::Vector2i(400, 400), sf::Vector2f(80.0f, 80.0f));
+    raycaster.CreateViewport(sf::Vector2i(800, 800), sf::Vector2f(80.0f, 80.0f));
     raycaster.LoadTextures();
 
 

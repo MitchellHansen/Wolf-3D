@@ -30,7 +30,7 @@ class Raycaster {
 
 public:
 
-    Raycaster(std::shared_ptr<Map> map, std::shared_ptr<Camera> camera);
+    Raycaster(Map *map, std::shared_ptr<Camera> camera);
     ~Raycaster();
 
     void LoadTextures();
@@ -60,7 +60,7 @@ private:
     std::vector<sf::Image> tile_map;
     std::vector<sf::Image> sprite_map;
 
-    std::shared_ptr<Map> map;
+    Map *map;
     std::shared_ptr<Camera> camera;
 
     std::vector<std::thread> thread_pool;

@@ -23,7 +23,7 @@ void Raycaster::Cast() {
 
 }
 
-Raycaster::Raycaster(std::shared_ptr<Map> map, std::shared_ptr<Camera> camera) :
+Raycaster::Raycaster(Map *map, std::shared_ptr<Camera> camera) :
         map(map), camera(camera) {
 	
 	for (int i = 0; i < 5; i++)
@@ -106,7 +106,7 @@ void Raycaster::CreateViewport(sf::Vector2i resolution, sf::Vector2f fov)
     viewport_texture.create(resolution.x, resolution.y);
     viewport_texture.update(viewport_image);
     viewport_sprite.setTexture(viewport_texture);
-	viewport_sprite.setScale(2.0, 2.0);
+	viewport_sprite.setScale(1.0, 1.0);
 
 }
 
@@ -152,7 +152,7 @@ void Raycaster::MarchThread() {
 		else {
 			queue_mutex.unlock();
 			using namespace std::chrono_literals;
-			std::this_thread::sleep_for(1ms);
+			std::this_thread::sleep_for(100us);
 		}
 	}
     
@@ -160,10 +160,16 @@ void Raycaster::MarchThread() {
 
 void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
 
+	sf::Vector2f cam_dir_polar = camera->getDirectionPolar();
+	sf::Vector3f cam_pos = camera->getPosition();
+	sf::Vector3i bound = map->getDimensions();
+
     sf::Vector2i pixel = start;
     F_Vec4f ray_dir;
     sf::Vector3i voxel_step;
-    sf::Vector3i voxel;
+    
+	sf::Vector3i voxel;
+
     sf::Vector3f delta_t;
 	
     sf::Vector3f intersection_t;
@@ -171,11 +177,17 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
     sf::Vector3i overshoot;
     sf::Vector3i undershoot;
 
-	sf::Vector2f cam_dir_polar = camera->getDirectionPolar();
-	sf::Vector3f cam_pos = camera->getPosition();
-	sf::Vector3i bound = map->getDimensions();
 	sf::Vector3f offset;
 
+	float cam_x_sin = sin(cam_dir_polar.x);
+	float cam_x_cos = cos(cam_dir_polar.x);
+
+	float cam_y_sin = sin(cam_dir_polar.y);
+	float cam_y_cos = cos(cam_dir_polar.y);
+
+	float int_cam_pos_x = floor(cam_pos.x);
+	float int_cam_pos_y = floor(cam_pos.y);
+	float int_cam_pos_z = floor(cam_pos.z);
 
     
 	while (pixel.x < end.x){
@@ -184,12 +196,6 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
             // 4f 3f ??
             ray_dir = viewport_matrix[pixel.x + viewport_resolution.x * pixel.y];
 
-
-			float cam_x_sin = sin(cam_dir_polar.x);
-			float cam_x_cos = cos(cam_dir_polar.x);
-            
-			float cam_y_sin = sin(cam_dir_polar.y);
-			float cam_y_cos = cos(cam_dir_polar.y);
 
 			ray_dir.noCopy(
 				ray_dir.z * cam_x_sin + ray_dir.x * cam_x_cos,
@@ -212,11 +218,10 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
 			voxel_step.z = static_cast<int>((ray_dir.z > 0) - (ray_dir.z < 0));
 			
         	// offset is how far we are into a voxel, enables sub voxel movement
-			offset.x = -(cam_pos.x - floor(cam_pos.x)) * voxel_step.x;
-			offset.y = -(cam_pos.y - floor(cam_pos.y)) * voxel_step.y;
-			offset.z = -(cam_pos.z - floor(cam_pos.z)) * voxel_step.z;
+			offset.x = -(cam_pos.x - int_cam_pos_x) * voxel_step.x;
+			offset.y = -(cam_pos.y - int_cam_pos_y) * voxel_step.y;
+			offset.z = -(cam_pos.z - int_cam_pos_z) * voxel_step.z;
 			
-
             // Setup the voxel coords from the camera origin
 			voxel.x = static_cast<int>(cam_pos.x);
 			voxel.y = static_cast<int>(cam_pos.y);
@@ -225,19 +230,20 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
 
             // Delta T is the units a ray must travel along an axis in order to
             // traverse an integer split
-			delta_t.x = fabs(1.0f / ray_dir.x);
-			delta_t.y = fabs(1.0f / ray_dir.y);
-			delta_t.z = fabs(1.0f / ray_dir.z);
+			delta_t.x = (1.0f / ray_dir.x);
+			delta_t.y = (1.0f / ray_dir.y);
+			delta_t.z = (1.0f / ray_dir.z);
 
-
+			delta_t.x = delta_t.x > 0 ? delta_t.x : -delta_t.x;
+			delta_t.y = delta_t.y > 0 ? delta_t.y : -delta_t.y;
+			delta_t.z = delta_t.z > 0 ? delta_t.z : -delta_t.z;
 
             // Intersection T is the collection of the next intersection points
             // for all 3 axis XYZ.
-            intersection_t = sf::Vector3f(
-                    delta_t.x * offset.x,
-                    delta_t.y * offset.y,
-                    delta_t.z * offset.z
-            );
+            intersection_t.x = delta_t.x * offset.x;
+			intersection_t.y = delta_t.y * offset.y;
+			intersection_t.z = delta_t.z * offset.z;
+                    
 
             // for negative values, wrap around the delta_t, rather not do this
             // component wise, but it doesn't appear to want to work
@@ -309,7 +315,7 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
                     break;
                 }
 
-                int voxel_data = map.get()->getGrid(voxel);
+                int voxel_data = map->getGrid(voxel);
 
                 if (voxel_data != 0) {
                     switch (voxel_data) {

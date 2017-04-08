@@ -27,7 +27,7 @@ int main() {
 	std::mt19937 rng(time(NULL));
 	std::uniform_int_distribution<int> rgen(100, 400);
 
-	sf::RenderWindow window(sf::VideoMode(800, 800), "quick-sfml-template");
+	sf::RenderWindow window(sf::VideoMode(800, 800), "Wolf-3D");
 	//window.setFramerateLimit(60);
 
 
@@ -47,7 +47,6 @@ int main() {
     raycaster.LoadTextures();
 
 
-
 	float physic_step = 0.166f;
 	float physic_time = 0.0f;
 	double frame_time = 0.0, elapsed_time = 0.0, delta_time = 0.0, accumulator_time = 0.0, current_time = 0.0;
@@ -59,6 +58,7 @@ int main() {
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
+				return 1;
 			}
 			if (event.type == sf::Event::MouseWheelScrolled) {
 				
@@ -72,22 +72,22 @@ int main() {
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			camera->giveImpulse(sf::Vector3f(-0.001, 0, 0), 1.0);
+			camera->giveImpulse(sf::Vector3f(-0.01, 0, 0), 1.0);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			camera->giveImpulse(sf::Vector3f(0, -0.001, 0), 1.0);
+			camera->giveImpulse(sf::Vector3f(0, -0.01, 0), 1.0);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			camera->giveImpulse(sf::Vector3f(0.001, 0, 0), 1.0);
+			camera->giveImpulse(sf::Vector3f(0.01, 0, 0), 1.0);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			camera->giveImpulse(sf::Vector3f(0, 0.001, 0), 1.0);
+			camera->giveImpulse(sf::Vector3f(0, 0.01, 0), 1.0);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-			camera->giveImpulse(sf::Vector3f(0, 0, 0.001), 1.0);
+			camera->giveImpulse(sf::Vector3f(0, 0, 0.01), 1.0);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-			camera->giveImpulse(sf::Vector3f(0, 0, -0.001), 1.0);
+			camera->giveImpulse(sf::Vector3f(0, 0, -0.01), 1.0);
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 			camera->moveDirection(sf::Vector2f(0, -0.1));

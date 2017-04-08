@@ -26,12 +26,12 @@ void Raycaster::Cast() {
 Raycaster::Raycaster(std::shared_ptr<Map> map, std::shared_ptr<Camera> camera) :
         map(map), camera(camera) {
 	
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 5; i++)
 		thread_pool.emplace_back(std::thread(&Raycaster::MarchThread, this));
 }
 
 Raycaster::~Raycaster(){
-	end_state = false;
+	end_state = true;
 
 	for (auto &&i : thread_pool) {
 		i.join();
@@ -119,17 +119,19 @@ void Raycaster::Draw(sf::RenderWindow * window) {
 
 void Raycaster::March() {
 
-    int thread_count = 40;
+    int thread_count = 10;
     for (int i = 0; i < thread_count; i++) {
         sf::Vector2i start = sf::Vector2i(0, ((viewport_resolution.y / thread_count) * i));
         sf::Vector2i end = sf::Vector2i(viewport_resolution.x, ((viewport_resolution.y / thread_count) * (i + 1)));
+
 		queue_mutex.lock();
         block_queue.push(std::make_pair(start, end));
 		queue_mutex.unlock();
     }
 
 	while (!block_queue.empty()) {
-		
+		using namespace std::chrono_literals;
+		std::this_thread::sleep_for(1ms);
 	}
 
 }
@@ -137,10 +139,11 @@ void Raycaster::March() {
 void Raycaster::MarchThread() {
 
 	while (!end_state) {
-
+		
 		queue_mutex.lock();
 
 		if (!block_queue.empty()) {
+			
 			std::pair<sf::Vector2i, sf::Vector2i> block = block_queue.front();
 			block_queue.pop();
 			queue_mutex.unlock();
@@ -171,13 +174,9 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
 	sf::Vector2f cam_dir_polar = camera->getDirectionPolar();
 	sf::Vector3f cam_pos = camera->getPosition();
 	sf::Vector3i bound = map->getDimensions();
+	sf::Vector3f offset;
 
-	// offset is how far we are into a voxel, enables sub voxel movement
-	sf::Vector3f offset = sf::Vector3f(
-		-(cam_pos.x - floor(cam_pos.x)) * voxel_step.x,
-		-(cam_pos.y - floor(cam_pos.y)) * voxel_step.y,
-		-(cam_pos.z - floor(cam_pos.z)) * voxel_step.z
-	);
+
     
 	while (pixel.x < end.x){
         while (pixel.y < end.y){
@@ -211,7 +210,12 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
             voxel_step.x = static_cast<int>((ray_dir.x > 0) - (ray_dir.x < 0));
 			voxel_step.y = static_cast<int>((ray_dir.y > 0) - (ray_dir.y < 0));
 			voxel_step.z = static_cast<int>((ray_dir.z > 0) - (ray_dir.z < 0));
-            
+			
+        	// offset is how far we are into a voxel, enables sub voxel movement
+			offset.x = -(cam_pos.x - floor(cam_pos.x)) * voxel_step.x;
+			offset.y = -(cam_pos.y - floor(cam_pos.y)) * voxel_step.y;
+			offset.z = -(cam_pos.z - floor(cam_pos.z)) * voxel_step.z;
+			
 
             // Setup the voxel coords from the camera origin
 			voxel.x = static_cast<int>(cam_pos.x);
@@ -224,7 +228,8 @@ void Raycaster::MarchSingle(sf::Vector2i start, sf::Vector2i end) {
 			delta_t.x = fabs(1.0f / ray_dir.x);
 			delta_t.y = fabs(1.0f / ray_dir.y);
 			delta_t.z = fabs(1.0f / ray_dir.z);
-            
+
+
 
             // Intersection T is the collection of the next intersection points
             // for all 3 axis XYZ.

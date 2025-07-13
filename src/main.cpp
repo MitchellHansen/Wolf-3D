@@ -119,7 +119,7 @@ int main() {
 
 
         
-		raycaster.March();
+                raycaster.Cast();
 
 
 		camera->update(delta_time);

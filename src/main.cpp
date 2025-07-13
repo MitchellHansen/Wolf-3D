@@ -72,19 +72,19 @@ int main() {
                         if (event.type == sf::Event::MouseButtonPressed) {
 
                         }
-                        if (event.type == sf::Event::MouseMoved) {
-                                sf::Vector2i center(window.getSize().x / 2, window.getSize().y / 2);
-                                int dx = event.mouseMove.x - center.x;
-                                int dy = event.mouseMove.y - center.y;
-                                // Slow mouse look significantly for easier control
-                                camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
-                                sf::Mouse::setPosition(center, window);
-                        }
                 }
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			camera->giveImpulse(sf::Vector3f(-0.01, 0, 0), 1.0);
-		}
+                // Handle mouse look using relative movement from window center
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                sf::Vector2i delta = mousePos - windowCenter;
+                if (delta.x != 0 || delta.y != 0) {
+                        camera->moveDirection(sf::Vector2f(-delta.y * 0.0002f, -delta.x * 0.0002f));
+                        sf::Mouse::setPosition(windowCenter, window);
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+                        camera->giveImpulse(sf::Vector3f(-0.01, 0, 0), 1.0);
+                }
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			camera->giveImpulse(sf::Vector3f(0, -0.01, 0), 1.0);
 		}

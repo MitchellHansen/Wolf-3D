@@ -21,5 +21,23 @@ int main() {
     cam2.update(0.01, nullptr);
     pos = cam2.getPosition();
     assert(pos.y > 0.f && std::abs(pos.x) < 0.001f);
+
+    // strafing right at yaw=0 should increase Y
+    Camera cam3;
+    cam3.setPosition(sf::Vector3f(0.f, 0.f, 0.f));
+    cam3.setDirection(sf::Vector2f(0.f, 0.f));
+    cam3.giveImpulse(sf::Vector3f(1.f, 0.f, 0.f), 1.f);
+    cam3.update(0.01, nullptr);
+    pos = cam3.getPosition();
+    assert(pos.y > 0.f && std::abs(pos.x) < 0.001f);
+
+    // strafing right at yaw=90deg should decrease X
+    Camera cam4;
+    cam4.setPosition(sf::Vector3f(0.f, 0.f, 0.f));
+    cam4.setDirection(sf::Vector2f(0.f, PI_F / 2.f));
+    cam4.giveImpulse(sf::Vector3f(1.f, 0.f, 0.f), 1.f);
+    cam4.update(0.01, nullptr);
+    pos = cam4.getPosition();
+    assert(pos.x < 0.f && std::abs(pos.y) < 0.001f);
     return 0;
 }

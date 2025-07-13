@@ -8,6 +8,7 @@ public:
     bool load(const std::string &spriteSheetPath);
     void setPosition(const sf::Vector2f &pos);
     sf::Vector2f getPosition() const;
+    void setVelocity(const sf::Vector2f &v) { velocity = v; }
     void update(float dt);
     void draw(sf::RenderWindow &window);
     int getCurrentFrame() const { return animator.getFrame(); }
@@ -18,4 +19,5 @@ private:
     int frameWidth{64};
     int frameHeight{64};
     Animator animator{4, 0.2f};
+    sf::Vector2f velocity{0.f, 0.f};
 };

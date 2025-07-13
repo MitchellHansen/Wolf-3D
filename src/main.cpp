@@ -26,8 +26,9 @@ float elap_time() {
 
 int main() {
 	
-	std::mt19937 rng(time(NULL));
-	std::uniform_int_distribution<int> rgen(100, 400);
+    std::mt19937 rng(time(NULL));
+    std::uniform_int_distribution<int> xdist(0, 800 - 64);
+    std::uniform_int_distribution<int> ydist(0, 800 - 64);
 
         sf::RenderWindow window(sf::VideoMode(800, 800), "Wolf-3D");
         window.setMouseCursorVisible(false);
@@ -55,7 +56,8 @@ int main() {
     for (int i = 0; i < 5; ++i) {
         Enemy e;
         e.load("assets/elite-guard.png");
-        e.setPosition(sf::Vector2f(rgen(rng), rgen(rng)));
+        e.setPosition(sf::Vector2f(xdist(rng), ydist(rng)));
+        e.setVelocity(sf::Vector2f(20.f, 0.f));
         enemies.push_back(e);
     }
 

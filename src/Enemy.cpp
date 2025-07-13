@@ -7,6 +7,7 @@ bool Enemy::load(const std::string &spriteSheetPath) {
         return false;
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0, frameHeight, frameWidth, frameHeight));
+    sprite.setOrigin(frameWidth / 2.f, frameHeight / 2.f);
     return true;
 }
 
@@ -22,6 +23,7 @@ void Enemy::update(float dt) {
     animator.update(dt);
     sprite.setTextureRect(sf::IntRect(animator.getFrame() * frameWidth,
                                       frameHeight, frameWidth, frameHeight));
+    sprite.move(velocity * dt);
 }
 
 void Enemy::draw(sf::RenderWindow &window) {

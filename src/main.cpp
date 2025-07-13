@@ -27,8 +27,11 @@ int main() {
 	std::mt19937 rng(time(NULL));
 	std::uniform_int_distribution<int> rgen(100, 400);
 
-	sf::RenderWindow window(sf::VideoMode(800, 800), "Wolf-3D");
-	//window.setFramerateLimit(60);
+        sf::RenderWindow window(sf::VideoMode(800, 800), "Wolf-3D");
+        window.setMouseCursorVisible(false);
+        window.setMouseCursorGrabbed(true);
+        sf::Vector2i windowCenter(window.getSize().x / 2, window.getSize().y / 2);
+        sf::Mouse::setPosition(windowCenter, window);
 
 
     std::shared_ptr<Camera> camera(new Camera);
@@ -55,21 +58,28 @@ int main() {
 	while (window.isOpen())
 	{
 		sf::Event event; // Handle input
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				window.close();
-				return 1;
-			}
-			if (event.type == sf::Event::MouseWheelScrolled) {
-				
-			}
-			if (event.type == sf::Event::KeyPressed) {
+                while (window.pollEvent(event)) {
+                        if (event.type == sf::Event::Closed) {
+                                window.close();
+                                return 1;
+                        }
+                        if (event.type == sf::Event::MouseWheelScrolled) {
 
-			}
-			if (event.type == sf::Event::MouseButtonPressed) {
+                        }
+                        if (event.type == sf::Event::KeyPressed) {
 
-			}
-		}
+                        }
+                        if (event.type == sf::Event::MouseButtonPressed) {
+
+                        }
+                        if (event.type == sf::Event::MouseMoved) {
+                                sf::Vector2i center(window.getSize().x / 2, window.getSize().y / 2);
+                                int dx = event.mouseMove.x - center.x;
+                                int dy = event.mouseMove.y - center.y;
+                                camera->moveDirection(sf::Vector2f(-dy * 0.002f, -dx * 0.002f));
+                                sf::Mouse::setPosition(center, window);
+                        }
+                }
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			camera->giveImpulse(sf::Vector3f(-0.01, 0, 0), 1.0);
@@ -122,7 +132,7 @@ int main() {
                 raycaster.Cast();
 
 
-		camera->update(delta_time);
+                camera->update(delta_time, map);
 
 		window.clear(sf::Color::White);
 

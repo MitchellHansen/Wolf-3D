@@ -20,6 +20,7 @@ public:
 
     void setGrid(sf::Vector3i position, char value);
     char getGrid(sf::Vector3i position);
+    bool isWall(sf::Vector3f position);
 
     sf::Vector3i getDimensions();
 

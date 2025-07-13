@@ -1,22 +1,12 @@
 
 #include "Raycaster.h"
+#include <cstring>
 
 void Raycaster::LoadTextures() {
-
-    sf::Texture hud_textures;
-    hud_textures.loadFromFile("../assets/hud.png");
-
-    sf::Texture object_textures;
-    hud_textures.loadFromFile("../assets/objects.png");
-
     sf::Image wall_textures;
-    hud_textures.loadFromFile("../assets/walls.png");
-
-    sf::Texture weapon_textures;
-    hud_textures.loadFromFile("../assets/weapons.png");
-
-    tile_map.push_back(wall_textures);
-
+    if (wall_textures.loadFromFile("../assets/walls.png")) {
+        tile_map.push_back(wall_textures);
+    }
 }
 
 void Raycaster::Cast() {
@@ -106,14 +96,44 @@ void Raycaster::Cast() {
         int drawEnd = lineHeight / 2 + viewport_resolution.y / 2;
         if (drawEnd >= viewport_resolution.y) drawEnd = viewport_resolution.y - 1;
 
+        float wallX;
+        if (side == 0)
+            wallX = posY + perpWallDist * rayDirY;
+        else
+            wallX = posX + perpWallDist * rayDirX;
+        wallX -= floor(wallX);
+
+        sf::Image* wallTex = tile_map.empty() ? nullptr : &tile_map[0];
+        int texWidth = wallTex ? wallTex->getSize().x : 1;
+        int texHeight = wallTex ? wallTex->getSize().y : 1;
+        int texX = static_cast<int>(wallX * texWidth);
+        if (wallTex) {
+            if (side == 0 && rayDirX > 0) texX = texWidth - texX - 1;
+            if (side == 1 && rayDirY < 0) texX = texWidth - texX - 1;
+        }
+
+        double step = static_cast<double>(texHeight) / lineHeight;
+        double texPos = (drawStart - viewport_resolution.y / 2 + lineHeight / 2) * step;
+
         for (int y = 0; y < viewport_resolution.y; ++y) {
             sf::Color col;
             if (y < drawStart)
-                col = sf::Color(100, 100, 100); // ceiling
+                col = sf::Color(100, 100, 100);
             else if (y > drawEnd)
-                col = sf::Color(50, 50, 50); // floor
-            else
-                col = side == 1 ? sf::Color(180, 180, 180) : sf::Color::White;
+                col = sf::Color(50, 50, 50);
+            else {
+                int texY = static_cast<int>(texPos) % texHeight;
+                texPos += step;
+                if (wallTex)
+                    col = wallTex->getPixel(texX % texWidth, texY);
+                else
+                    col = sf::Color::White;
+                if (side == 1) {
+                    col.r = static_cast<sf::Uint8>(col.r * 0.7f);
+                    col.g = static_cast<sf::Uint8>(col.g * 0.7f);
+                    col.b = static_cast<sf::Uint8>(col.b * 0.7f);
+                }
+            }
 
             int index = (x + viewport_resolution.x * y) * 4;
             viewport_image[index] = col.r;

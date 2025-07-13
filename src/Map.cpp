@@ -101,6 +101,14 @@ sf::Vector3i Map::getDimensions() {
     return grid_dimensions;
 }
 
+bool Map::isWall(sf::Vector3f position) {
+    sf::Vector3i pos(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(position.z));
+    if (pos.x < 0 || pos.y < 0 || pos.z < 0 ||
+        pos.x >= grid_dimensions.x || pos.y >= grid_dimensions.y || pos.z >= grid_dimensions.z)
+        return true;
+    return getGrid(pos) != 0;
+}
+
 
 
 

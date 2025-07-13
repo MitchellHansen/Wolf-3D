@@ -76,7 +76,8 @@ int main() {
                                 sf::Vector2i center(window.getSize().x / 2, window.getSize().y / 2);
                                 int dx = event.mouseMove.x - center.x;
                                 int dy = event.mouseMove.y - center.y;
-                                camera->moveDirection(sf::Vector2f(-dy * 0.002f, -dx * 0.002f));
+                                // Slow mouse look significantly for easier control
+                                camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
                                 sf::Mouse::setPosition(center, window);
                         }
                 }

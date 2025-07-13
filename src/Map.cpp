@@ -102,11 +102,16 @@ sf::Vector3i Map::getDimensions() {
 }
 
 bool Map::isWall(sf::Vector3f position) {
-    sf::Vector3i pos(static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(position.z));
-    if (pos.x < 0 || pos.y < 0 || pos.z < 0 ||
-        pos.x >= grid_dimensions.x || pos.y >= grid_dimensions.y || pos.z >= grid_dimensions.z)
+    int x = static_cast<int>(position.x);
+    int y = static_cast<int>(position.y);
+
+    if (x < 0 || y < 0 ||
+        x >= grid_dimensions.x || y >= grid_dimensions.y)
         return true;
-    return getGrid(pos) != 0;
+
+    // Collision is checked in the first layer since the raycaster
+    // only renders that plane.
+    return getGrid(sf::Vector3i(x, y, 0)) != 0;
 }
 
 

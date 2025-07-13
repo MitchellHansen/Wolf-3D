@@ -18,8 +18,8 @@ public:
 
     void setDirection (sf::Vector2f direction);
     void moveDirection (sf::Vector2f direction);
-    sf::Vector2f getDirectionPolar();
-    sf::Vector3f getDirectionCartesian();
+    sf::Vector2f getDirectionPolar() const;
+    sf::Vector3f getDirectionCartesian() const;
 
 private:
 

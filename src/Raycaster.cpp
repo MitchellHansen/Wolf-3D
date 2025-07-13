@@ -4,7 +4,11 @@
 
 void Raycaster::LoadTextures() {
     sf::Image spriteSheet;
-    if (spriteSheet.loadFromFile("../assets/walls.png")) {
+    if (!spriteSheet.loadFromFile("assets/walls.png"))
+        spriteSheet.loadFromFile("../assets/walls.png");
+    if (!spriteSheet.getSize().x)
+        return;
+    {
         const int SPRITE_SIZE = 64;
         sf::Image wallTexture;
         wallTexture.create(SPRITE_SIZE, SPRITE_SIZE);

@@ -10,3 +10,11 @@ reliance on renderer iteration performance.
 The PNG files inside `assets/` are sprite sheets. `walls.png` contains
 64x64 tiles arranged in a grid. Currently the first tile of this sheet is
 used as the wall texture by the raycaster.
+
+`elite-guard.png` is a 4x3 sheet of 64x64 sprites. The middle row contains
+the four-frame walking animation used by the test enemy.
+
+The game spawns a few enemies each frame and projects their world
+coordinates to screen space so they appear in front of the camera. The camera
+faces along the +X axis by default so the first enemy is positioned two units
+ahead based on the current yaw.

@@ -75,10 +75,10 @@ void Camera::moveDirection (sf::Vector2f direction){
     this->direction += direction;
 }
 
-sf::Vector2f Camera::getDirectionPolar(){
+sf::Vector2f Camera::getDirectionPolar() const{
     return direction;
 }
 
-sf::Vector3f Camera::getDirectionCartesian(){
+sf::Vector3f Camera::getDirectionCartesian() const{
     return SphereToCart(direction);
 }

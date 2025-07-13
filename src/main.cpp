@@ -3,10 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <chrono>
+#include <cmath>
 #include <Camera.h>
 #include <Map.h>
 #include <Raycaster.h>
+#include "Enemy.h"
 #include "util.hpp"
+#include <vector>
 
 float elap_time() {
 	static std::chrono::time_point<std::chrono::system_clock> start;
@@ -23,9 +26,8 @@ float elap_time() {
 }
 
 int main() {
-	
-	std::mt19937 rng(time(NULL));
-	std::uniform_int_distribution<int> rgen(100, 400);
+
+    std::mt19937 rng(time(NULL));
 
         sf::RenderWindow window(sf::VideoMode(800, 800), "Wolf-3D");
         window.setMouseCursorVisible(false);
@@ -36,7 +38,8 @@ int main() {
 
     std::shared_ptr<Camera> camera(new Camera);
     camera->setPosition(sf::Vector3f(3.1f, 3.1f, 3.1f));
-    camera->setDirection(sf::Vector2f(1.0f, 0.0f));
+    // face down the +X axis
+    camera->setDirection(sf::Vector2f(0.0f, 0.0f));
 
     Map *map = new Map;
 
@@ -48,6 +51,42 @@ int main() {
 
     raycaster.CreateViewport(sf::Vector2i(800, 800), sf::Vector2f(80.0f, 80.0f));
     raycaster.LoadTextures();
+
+    sf::Vector3i dims = map->getDimensions();
+    std::uniform_real_distribution<float> xdist(0.f, static_cast<float>(dims.x));
+    std::uniform_real_distribution<float> ydist(0.f, static_cast<float>(dims.y));
+
+    std::vector<Enemy> enemies;
+
+    // Spawn one enemy directly in front of the player
+    {
+        Enemy e;
+        if(!e.load("assets/elite-guard.png"))
+        {
+            std::cerr << "Enemy sprite failed to load" << std::endl;
+            return 1;
+        }
+        sf::Vector3f camPos = camera->getPosition();
+        float yaw = camera->getDirectionPolar().y;
+        sf::Vector2f forward(std::cos(yaw), std::sin(yaw));
+        sf::Vector2f wpos(camPos.x + forward.x * 2.f,
+                         camPos.y + forward.y * 2.f);
+        e.setPosition(wpos);
+        enemies.push_back(e);
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        Enemy e;
+        if(!e.load("assets/elite-guard.png"))
+        {
+            std::cerr << "Enemy sprite failed to load" << std::endl;
+            return 1;
+        }
+        sf::Vector2f wpos(xdist(rng), ydist(rng));
+        e.setPosition(wpos);
+        e.setVelocity(sf::Vector2f(20.f, 0.f));
+        enemies.push_back(e);
+    }
 
 
 	float physic_step = 0.166f;
@@ -130,10 +169,15 @@ int main() {
 
 		window.clear(sf::Color::White);
 
-		raycaster.Draw(&window);
+                raycaster.Draw(&window);
 
-		fps.draw(&window);
-		fps.frame(delta_time);
+                for (auto &enemy : enemies) {
+                    enemy.update(static_cast<float>(delta_time));
+                    enemy.draw(window, *camera, 60.f);
+                }
+
+                fps.draw(&window);
+                fps.frame(delta_time);
 
 		window.display();
 

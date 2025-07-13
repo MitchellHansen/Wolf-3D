@@ -32,7 +32,6 @@ int main() {
         window.setMouseCursorGrabbed(true);
         sf::Vector2i windowCenter(window.getSize().x / 2, window.getSize().y / 2);
         sf::Mouse::setPosition(windowCenter, window);
-        sf::Vector2i lastMousePos = sf::Mouse::getPosition(window);
 
 
     std::shared_ptr<Camera> camera(new Camera);
@@ -56,26 +55,23 @@ int main() {
 	double frame_time = 0.0, elapsed_time = 0.0, delta_time = 0.0, accumulator_time = 0.0, current_time = 0.0;
 	fps_counter fps;
 
-	while (window.isOpen())
-	{
+        while (window.isOpen())
+        {
                 sf::Event event; // Handle input
                 while (window.pollEvent(event)) {
                         if (event.type == sf::Event::Closed) {
                                 window.close();
                                 return 1;
                         }
+                        if (event.type == sf::Event::MouseMoved) {
+                                sf::Vector2i center(window.getSize().x / 2, window.getSize().y / 2);
+                                int dx = event.mouseMove.x - center.x;
+                                int dy = event.mouseMove.y - center.y;
+                                camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
+                                std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
+                                sf::Mouse::setPosition(center, window);
+                        }
                 }
-
-                // Measure mouse movement relative to the previous frame so
-                // stopping the mouse results in a zero delta.
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                int dx = mousePos.x - lastMousePos.x;
-                int dy = mousePos.y - lastMousePos.y;
-                if (dx != 0 || dy != 0) {
-                        camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
-                        std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
-                }
-                lastMousePos = mousePos;
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
                         camera->giveImpulse(sf::Vector3f(-0.0025f, 0, 0), 1.0);

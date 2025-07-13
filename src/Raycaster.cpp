@@ -3,9 +3,13 @@
 #include <cstring>
 
 void Raycaster::LoadTextures() {
-    sf::Image wall_textures;
-    if (wall_textures.loadFromFile("../assets/walls.png")) {
-        tile_map.push_back(wall_textures);
+    sf::Image spriteSheet;
+    if (spriteSheet.loadFromFile("../assets/walls.png")) {
+        const int SPRITE_SIZE = 64;
+        sf::Image wallTexture;
+        wallTexture.create(SPRITE_SIZE, SPRITE_SIZE);
+        wallTexture.copy(spriteSheet, 0, 0, sf::IntRect(0, 0, SPRITE_SIZE, SPRITE_SIZE), false);
+        tile_map.push_back(wallTexture);
     }
 }
 

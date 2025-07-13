@@ -32,7 +32,6 @@ int main() {
         window.setMouseCursorGrabbed(true);
         sf::Vector2i windowCenter(window.getSize().x / 2, window.getSize().y / 2);
         sf::Mouse::setPosition(windowCenter, window);
-        sf::Vector2i prevMousePos = windowCenter;
 
 
     std::shared_ptr<Camera> camera(new Camera);
@@ -65,13 +64,14 @@ int main() {
                                 return 1;
                         }
                         if (event.type == sf::Event::MouseMoved) {
-                                sf::Vector2i pos(event.mouseMove.x, event.mouseMove.y);
-                                int dx = pos.x - prevMousePos.x;
-                                int dy = pos.y - prevMousePos.y;
-                                camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
-                                std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
-                                sf::Mouse::setPosition(windowCenter, window);
-                                prevMousePos = windowCenter;
+                                sf::Vector2i pos = sf::Mouse::getPosition(window);
+                                int dx = pos.x - windowCenter.x;
+                                int dy = pos.y - windowCenter.y;
+                                if (dx != 0 || dy != 0) {
+                                        camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
+                                        std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
+                                        sf::Mouse::setPosition(windowCenter, window);
+                                }
                         }
                 }
 

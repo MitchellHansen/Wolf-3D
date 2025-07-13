@@ -1,10 +1,13 @@
 #include "Enemy.h"
+#include <iostream>
 
 Enemy::Enemy() {}
 
 bool Enemy::load(const std::string &spriteSheetPath) {
-    if (!texture.loadFromFile(spriteSheetPath))
+    if (!texture.loadFromFile(spriteSheetPath)) {
+        std::cerr << "Failed to load sprite sheet: " << spriteSheetPath << std::endl;
         return false;
+    }
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0, frameHeight, frameWidth, frameHeight));
     sprite.setOrigin(frameWidth / 2.f, frameHeight);

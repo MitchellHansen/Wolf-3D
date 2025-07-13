@@ -61,7 +61,11 @@ int main() {
     // Spawn one enemy directly in front of the player
     {
         Enemy e;
-        e.load("assets/elite-guard.png");
+        if(!e.load("assets/elite-guard.png"))
+        {
+            std::cerr << "Enemy sprite failed to load" << std::endl;
+            return 1;
+        }
         sf::Vector3f camPos = camera->getPosition();
         float yaw = camera->getDirectionPolar().y;
         sf::Vector2f forward(std::cos(yaw), std::sin(yaw));
@@ -73,7 +77,11 @@ int main() {
 
     for (int i = 0; i < 4; ++i) {
         Enemy e;
-        e.load("assets/elite-guard.png");
+        if(!e.load("assets/elite-guard.png"))
+        {
+            std::cerr << "Enemy sprite failed to load" << std::endl;
+            return 1;
+        }
         sf::Vector2f wpos(xdist(rng), ydist(rng));
         e.setPosition(wpos);
         e.setVelocity(sf::Vector2f(20.f, 0.f));

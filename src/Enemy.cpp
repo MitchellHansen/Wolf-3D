@@ -19,6 +19,14 @@ sf::Vector2f Enemy::getPosition() const {
     return position;
 }
 
+void Enemy::setScreenPosition(const sf::Vector2f &pos) {
+    sprite.setPosition(pos);
+}
+
+void Enemy::drawSprite(sf::RenderTarget &target) {
+    target.draw(sprite);
+}
+
 void Enemy::update(float dt) {
     animator.update(dt);
     sprite.setTextureRect(sf::IntRect(animator.getFrame() * frameWidth,

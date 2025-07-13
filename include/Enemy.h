@@ -10,6 +10,8 @@ public:
     bool load(const std::string &spriteSheetPath);
     void setPosition(const sf::Vector2f &pos);
     sf::Vector2f getPosition() const;
+    void setScreenPosition(const sf::Vector2f &pos);
+    void drawSprite(sf::RenderTarget &target);
     void setVelocity(const sf::Vector2f &v) { velocity = v; }
     void update(float dt);
     void draw(sf::RenderTarget &target, const Camera &camera, float fovDeg);

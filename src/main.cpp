@@ -6,7 +6,9 @@
 #include <Camera.h>
 #include <Map.h>
 #include <Raycaster.h>
+#include "Enemy.h"
 #include "util.hpp"
+#include <vector>
 
 float elap_time() {
 	static std::chrono::time_point<std::chrono::system_clock> start;
@@ -48,6 +50,14 @@ int main() {
 
     raycaster.CreateViewport(sf::Vector2i(800, 800), sf::Vector2f(80.0f, 80.0f));
     raycaster.LoadTextures();
+
+    std::vector<Enemy> enemies;
+    for (int i = 0; i < 5; ++i) {
+        Enemy e;
+        e.load("assets/elite-guard.png");
+        e.setPosition(sf::Vector2f(rgen(rng), rgen(rng)));
+        enemies.push_back(e);
+    }
 
 
 	float physic_step = 0.166f;
@@ -130,10 +140,15 @@ int main() {
 
 		window.clear(sf::Color::White);
 
-		raycaster.Draw(&window);
+                raycaster.Draw(&window);
 
-		fps.draw(&window);
-		fps.frame(delta_time);
+                for (auto &enemy : enemies) {
+                    enemy.update(static_cast<float>(delta_time));
+                    enemy.draw(window);
+                }
+
+                fps.draw(&window);
+                fps.frame(delta_time);
 
 		window.display();
 

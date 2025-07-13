@@ -10,7 +10,7 @@ public:
     Camera();
     ~Camera();
 
-    void update(double delta_time);
+    void update(double delta_time, class Map* map = nullptr);
 
     void giveImpulse(sf::Vector3f direction, float value);
     void setPosition(sf::Vector3f position);

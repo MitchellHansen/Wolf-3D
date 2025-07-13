@@ -57,27 +57,24 @@ int main() {
 
 	while (window.isOpen())
 	{
-		sf::Event event; // Handle input
+                sf::Event event; // Handle input
                 while (window.pollEvent(event)) {
                         if (event.type == sf::Event::Closed) {
                                 window.close();
                                 return 1;
                         }
-                        if (event.type == sf::Event::MouseWheelScrolled) {
+                }
 
-                        }
-                        if (event.type == sf::Event::KeyPressed) {
-
-                        }
-                        if (event.type == sf::Event::MouseButtonPressed) {
-
-                        }
-                        if (event.type == sf::Event::MouseMoved) {
-                                int dx = event.mouseMove.x - windowCenter.x;
-                                int dy = event.mouseMove.y - windowCenter.y;
-                                camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
-                                sf::Mouse::setPosition(windowCenter, window);
-                        }
+                // Process mouse movement relative to the window center. Using
+                // getPosition avoids spurious events from repositioning the
+                // cursor each frame.
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                int dx = mousePos.x - windowCenter.x;
+                int dy = mousePos.y - windowCenter.y;
+                if (dx != 0 || dy != 0) {
+                        camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
+                        std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
+                        sf::Mouse::setPosition(windowCenter, window);
                 }
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {

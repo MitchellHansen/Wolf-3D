@@ -91,5 +91,15 @@ int main() {
     assert(dir5.x < 0.f && std::abs(dir5.y) < 0.0001f);
     assert(castRay(map, cam5.getPosition(), dir5.y));
 
+    // After rotation, no further mouse movement should keep orientation stable
+    Camera cam6;
+    cam6.setPosition(start);
+    cam6.setDirection(sf::Vector2f(0.f, 0.f));
+    cam6.moveDirection(sf::Vector2f(0.f, PI_F / 4.f));
+    sf::Vector2f before = cam6.getDirectionPolar();
+    cam6.moveDirection(sf::Vector2f(0.f, 0.f));
+    sf::Vector2f after = cam6.getDirectionPolar();
+    assert(std::abs(after.y - before.y) < 1e-6f);
+
     return 0;
 }

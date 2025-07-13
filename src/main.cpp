@@ -55,51 +55,44 @@ int main() {
 	double frame_time = 0.0, elapsed_time = 0.0, delta_time = 0.0, accumulator_time = 0.0, current_time = 0.0;
 	fps_counter fps;
 
-	while (window.isOpen())
-	{
-		sf::Event event; // Handle input
+        while (window.isOpen())
+        {
+                sf::Event event; // Handle input
                 while (window.pollEvent(event)) {
                         if (event.type == sf::Event::Closed) {
                                 window.close();
                                 return 1;
                         }
-                        if (event.type == sf::Event::MouseWheelScrolled) {
-
-                        }
-                        if (event.type == sf::Event::KeyPressed) {
-
-                        }
-                        if (event.type == sf::Event::MouseButtonPressed) {
-
-                        }
                         if (event.type == sf::Event::MouseMoved) {
-                                sf::Vector2i center(window.getSize().x / 2, window.getSize().y / 2);
-                                int dx = event.mouseMove.x - center.x;
-                                int dy = event.mouseMove.y - center.y;
-                                // Slow mouse look significantly for easier control
-                                camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
-                                sf::Mouse::setPosition(center, window);
+                                sf::Vector2i pos = sf::Mouse::getPosition(window);
+                                int dx = pos.x - windowCenter.x;
+                                int dy = pos.y - windowCenter.y;
+                                if (dx != 0 || dy != 0) {
+                                        camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
+                                        std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
+                                        sf::Mouse::setPosition(windowCenter, window);
+                                }
                         }
                 }
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-			camera->giveImpulse(sf::Vector3f(-0.01, 0, 0), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			camera->giveImpulse(sf::Vector3f(0, -0.01, 0), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			camera->giveImpulse(sf::Vector3f(0.01, 0, 0), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			camera->giveImpulse(sf::Vector3f(0, 0.01, 0), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-			camera->giveImpulse(sf::Vector3f(0, 0, 0.01), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-			camera->giveImpulse(sf::Vector3f(0, 0, -0.01), 1.0);
-		}
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+                        camera->giveImpulse(sf::Vector3f(-0.0025f, 0, 0), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+                        camera->giveImpulse(sf::Vector3f(0, -0.0025f, 0), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+                        camera->giveImpulse(sf::Vector3f(0.0025f, 0, 0), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+                        camera->giveImpulse(sf::Vector3f(0, 0.0025f, 0), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+                        camera->giveImpulse(sf::Vector3f(0, 0, 0.0025f), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+                        camera->giveImpulse(sf::Vector3f(0, 0, -0.0025f), 1.0);
+                }
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 			camera->moveDirection(sf::Vector2f(0, -0.1));
 		}

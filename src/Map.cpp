@@ -2,10 +2,11 @@
 
 
 Map::Map(){
-
+    grid = nullptr;
 }
 Map::~Map(){
-
+    delete[] grid;
+    grid = nullptr;
 }
 
 void Map::Init(sf::Vector3i dimensions){
@@ -85,13 +86,13 @@ void Map::saveGrid(std::string filename) {
 
 void Map::setGrid(sf::Vector3i position, char value) {
 
-	grid[position.x + grid_dimensions.x * (position.y + grid_dimensions.z * position.z)] = value;
+    grid[position.x + grid_dimensions.x * (position.y + grid_dimensions.y * position.z)] = value;
    // grid.at(position.x).at(position.y).at(position.z) = value;
 
 }
 char Map::getGrid(sf::Vector3i position){
 
-	return grid[position.x + grid_dimensions.x * (position.y + grid_dimensions.z * position.z)];
+    return grid[position.x + grid_dimensions.x * (position.y + grid_dimensions.y * position.z)];
     //;return grid[position.x][position.y][position.z];
 
 }

@@ -20,14 +20,112 @@ void Raycaster::LoadTextures() {
 }
 
 void Raycaster::Cast() {
+    if (!viewport_image)
+        return;
 
+    sf::Vector2f dir = camera->getDirectionPolar();
+    float dir_yaw = dir.y;
+    sf::Vector3f pos3 = camera->getPosition();
+    float posX = pos3.x;
+    float posY = pos3.y;
+
+    float fov_rad = DegreesToRadians(fov_horizontal);
+
+    sf::Vector3i mapDim = map->getDimensions();
+
+    for (int x = 0; x < viewport_resolution.x; ++x) {
+        float cameraX = 2.0f * x / viewport_resolution.x - 1.0f;
+        float rayAngle = dir_yaw + cameraX * (fov_rad / 2.0f);
+        float rayDirX = cos(rayAngle);
+        float rayDirY = sin(rayAngle);
+
+        int mapX = static_cast<int>(posX);
+        int mapY = static_cast<int>(posY);
+
+        float deltaDistX = rayDirX == 0 ? 1e30f : std::abs(1.0f / rayDirX);
+        float deltaDistY = rayDirY == 0 ? 1e30f : std::abs(1.0f / rayDirY);
+
+        int stepX;
+        int stepY;
+
+        float sideDistX;
+        float sideDistY;
+
+        if (rayDirX < 0) {
+            stepX = -1;
+            sideDistX = (posX - mapX) * deltaDistX;
+        } else {
+            stepX = 1;
+            sideDistX = (mapX + 1.0f - posX) * deltaDistX;
+        }
+
+        if (rayDirY < 0) {
+            stepY = -1;
+            sideDistY = (posY - mapY) * deltaDistY;
+        } else {
+            stepY = 1;
+            sideDistY = (mapY + 1.0f - posY) * deltaDistY;
+        }
+
+        int hit = 0;
+        int side = 0;
+
+        while (hit == 0) {
+            if (sideDistX < sideDistY) {
+                sideDistX += deltaDistX;
+                mapX += stepX;
+                side = 0;
+            } else {
+                sideDistY += deltaDistY;
+                mapY += stepY;
+                side = 1;
+            }
+
+            if (mapX < 0 || mapY < 0 || mapX >= mapDim.x || mapY >= mapDim.y) {
+                hit = 1;
+                break;
+            }
+
+            if (map->getGrid(sf::Vector3i(mapX, mapY, 0)) > 0) {
+                hit = 1;
+            }
+        }
+
+        float perpWallDist;
+        if (side == 0)
+            perpWallDist = (sideDistX - deltaDistX);
+        else
+            perpWallDist = (sideDistY - deltaDistY);
+
+        if (perpWallDist <= 0.0f)
+            perpWallDist = 0.1f;
+
+        int lineHeight = static_cast<int>(viewport_resolution.y / perpWallDist);
+        int drawStart = -lineHeight / 2 + viewport_resolution.y / 2;
+        if (drawStart < 0) drawStart = 0;
+        int drawEnd = lineHeight / 2 + viewport_resolution.y / 2;
+        if (drawEnd >= viewport_resolution.y) drawEnd = viewport_resolution.y - 1;
+
+        for (int y = 0; y < viewport_resolution.y; ++y) {
+            sf::Color col;
+            if (y < drawStart)
+                col = sf::Color(100, 100, 100); // ceiling
+            else if (y > drawEnd)
+                col = sf::Color(50, 50, 50); // floor
+            else
+                col = side == 1 ? sf::Color(180, 180, 180) : sf::Color::White;
+
+            int index = (x + viewport_resolution.x * y) * 4;
+            viewport_image[index] = col.r;
+            viewport_image[index + 1] = col.g;
+            viewport_image[index + 2] = col.b;
+            viewport_image[index + 3] = 255;
+        }
+    }
 }
 
 Raycaster::Raycaster(Map *map, std::shared_ptr<Camera> camera) :
         map(map), camera(camera) {
-	
-	for (int i = 0; i < 5; i++)
-		thread_pool.emplace_back(std::thread(&Raycaster::MarchThread, this));
 }
 
 Raycaster::~Raycaster(){
@@ -42,6 +140,7 @@ void Raycaster::CreateViewport(sf::Vector2i resolution, sf::Vector2f fov)
 {
     // CL needs the screen resolution
     viewport_resolution = resolution;
+    fov_horizontal = fov.x;
 
     // And an array of vectors describing the way the "lens" of our
     // camera works

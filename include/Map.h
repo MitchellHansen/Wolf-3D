@@ -27,7 +27,7 @@ private:
 
     sf::Vector3i grid_dimensions;
     //std::vector<std::vector<std::vector<char>>> grid;
-	char *grid;
+    char *grid = nullptr;
 
 
 };

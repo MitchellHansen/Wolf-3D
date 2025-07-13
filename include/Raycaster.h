@@ -57,6 +57,8 @@ private:
     sf::Texture viewport_texture;
     sf::Sprite viewport_sprite;
 
+    float fov_horizontal = 60.f;
+
     std::vector<sf::Image> tile_map;
     std::vector<sf::Image> sprite_map;
 

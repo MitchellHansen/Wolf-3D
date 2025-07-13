@@ -72,16 +72,12 @@ int main() {
                         if (event.type == sf::Event::MouseButtonPressed) {
 
                         }
-                }
-
-                // Handle mouse look using relative movement from window center
-                static sf::Vector2i lastMousePos = windowCenter;
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                sf::Vector2i delta = mousePos - lastMousePos;
-                if (delta.x != 0 || delta.y != 0) {
-                        camera->moveDirection(sf::Vector2f(-delta.y * 0.0002f, -delta.x * 0.0002f));
-                        sf::Mouse::setPosition(windowCenter, window);
-                        lastMousePos = windowCenter;
+                        if (event.type == sf::Event::MouseMoved) {
+                                int dx = event.mouseMove.x - windowCenter.x;
+                                int dy = event.mouseMove.y - windowCenter.y;
+                                camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
+                                sf::Mouse::setPosition(windowCenter, window);
+                        }
                 }
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {

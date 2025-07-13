@@ -19,7 +19,8 @@ void Camera::giveImpulse(sf::Vector3f direction_local, float value){
     // Basis vectors for the camera in world coordinates (ignoring pitch for
     // movement).
     sf::Vector3f forward(std::cos(yaw), std::sin(yaw), 0.f);
-    sf::Vector3f right(-forward.y, forward.x, 0.f);
+    // Right handed system: right = forward x up
+    sf::Vector3f right(forward.y, -forward.x, 0.f);
     sf::Vector3f up(0.f, 0.f, 1.f);
 
     sf::Vector3f world_dir = right * direction_local.x +

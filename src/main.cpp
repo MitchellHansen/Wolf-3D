@@ -68,7 +68,7 @@ int main() {
                                 int dx = pos.x - windowCenter.x;
                                 int dy = pos.y - windowCenter.y;
                                 if (dx != 0 || dy != 0) {
-                                        camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
+                                        camera->moveDirection(sf::Vector2f(dy * 0.0004f, dx * 0.0004f));
                                         std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
                                         sf::Mouse::setPosition(windowCenter, window);
                                 }
@@ -76,13 +76,13 @@ int main() {
                 }
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-                        camera->giveImpulse(sf::Vector3f(-0.0025f, 0, 0), 1.0);
+                        camera->giveImpulse(sf::Vector3f(0.0025f, 0, 0), 1.0);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
                         camera->giveImpulse(sf::Vector3f(0, -0.0025f, 0), 1.0);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-                        camera->giveImpulse(sf::Vector3f(0.0025f, 0, 0), 1.0);
+                        camera->giveImpulse(sf::Vector3f(-0.0025f, 0, 0), 1.0);
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
                         camera->giveImpulse(sf::Vector3f(0, 0.0025f, 0), 1.0);

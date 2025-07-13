@@ -75,31 +75,33 @@ int main() {
                 }
 
                 // Handle mouse look using relative movement from window center
+                static sf::Vector2i lastMousePos = windowCenter;
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                sf::Vector2i delta = mousePos - windowCenter;
+                sf::Vector2i delta = mousePos - lastMousePos;
                 if (delta.x != 0 || delta.y != 0) {
                         camera->moveDirection(sf::Vector2f(-delta.y * 0.0002f, -delta.x * 0.0002f));
                         sf::Mouse::setPosition(windowCenter, window);
+                        lastMousePos = windowCenter;
                 }
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-                        camera->giveImpulse(sf::Vector3f(-0.01, 0, 0), 1.0);
+                        camera->giveImpulse(sf::Vector3f(-0.0025f, 0, 0), 1.0);
                 }
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			camera->giveImpulse(sf::Vector3f(0, -0.01, 0), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-			camera->giveImpulse(sf::Vector3f(0.01, 0, 0), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			camera->giveImpulse(sf::Vector3f(0, 0.01, 0), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-			camera->giveImpulse(sf::Vector3f(0, 0, 0.01), 1.0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-			camera->giveImpulse(sf::Vector3f(0, 0, -0.01), 1.0);
-		}
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+                        camera->giveImpulse(sf::Vector3f(0, -0.0025f, 0), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+                        camera->giveImpulse(sf::Vector3f(0.0025f, 0, 0), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+                        camera->giveImpulse(sf::Vector3f(0, 0.0025f, 0), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+                        camera->giveImpulse(sf::Vector3f(0, 0, 0.0025f), 1.0);
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+                        camera->giveImpulse(sf::Vector3f(0, 0, -0.0025f), 1.0);
+                }
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 			camera->moveDirection(sf::Vector2f(0, -0.1));
 		}

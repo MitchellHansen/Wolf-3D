@@ -12,7 +12,7 @@ public:
     sf::Vector2f getPosition() const;
     void setVelocity(const sf::Vector2f &v) { velocity = v; }
     void update(float dt);
-    void draw(sf::RenderWindow &window, const Camera &camera, float fovDeg);
+    void draw(sf::RenderTarget &target, const Camera &camera, float fovDeg);
     int getCurrentFrame() const { return animator.getFrame(); }
 
 private:

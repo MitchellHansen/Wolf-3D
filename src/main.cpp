@@ -53,11 +53,6 @@ int main() {
     sf::Vector3i dims = map->getDimensions();
     std::uniform_real_distribution<float> xdist(0.f, static_cast<float>(dims.x));
     std::uniform_real_distribution<float> ydist(0.f, static_cast<float>(dims.y));
-    float scale = 800.f / static_cast<float>(std::max(dims.x, dims.y));
-
-    auto toScreen = [&](sf::Vector2f world){
-        return sf::Vector2f(world.x * scale, world.y * scale);
-    };
 
     std::vector<Enemy> enemies;
 
@@ -68,7 +63,7 @@ int main() {
         sf::Vector3f camPos = camera->getPosition();
         sf::Vector3f dir = camera->getDirectionCartesian();
         sf::Vector2f wpos(camPos.x + dir.x * 2.f, camPos.y + dir.y * 2.f);
-        e.setPosition(toScreen(wpos));
+        e.setPosition(wpos);
         enemies.push_back(e);
     }
 
@@ -76,7 +71,7 @@ int main() {
         Enemy e;
         e.load("assets/elite-guard.png");
         sf::Vector2f wpos(xdist(rng), ydist(rng));
-        e.setPosition(toScreen(wpos));
+        e.setPosition(wpos);
         e.setVelocity(sf::Vector2f(20.f, 0.f));
         enemies.push_back(e);
     }

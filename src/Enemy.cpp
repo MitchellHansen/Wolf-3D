@@ -26,15 +26,16 @@ void Enemy::update(float dt) {
     position += velocity * dt;
 }
 
-void Enemy::draw(sf::RenderWindow &window, const Camera &camera, float fovDeg) {
+void Enemy::draw(sf::RenderTarget &target, const Camera &camera, float fovDeg) {
     sf::Vector2f screenPos;
     float scale;
-    if (!WorldToScreen(position, camera, fovDeg, window.getSize(), screenPos, scale))
+    sf::Vector2u size = target.getSize();
+    if (!WorldToScreen(position, camera, fovDeg, size, screenPos, scale))
         return;
     float baseSize = 150.f; // constant for on-screen scaling
     float pixelSize = baseSize * scale;
     sprite.setPosition(screenPos);
     sprite.setScale(pixelSize / frameWidth, pixelSize / frameHeight);
     sprite.setOrigin(frameWidth / 2.f, frameHeight);
-    window.draw(sprite);
+    target.draw(sprite);
 }

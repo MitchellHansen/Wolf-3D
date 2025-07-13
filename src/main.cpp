@@ -30,7 +30,9 @@ int main() {
         sf::RenderWindow window(sf::VideoMode(800, 800), "Wolf-3D");
         window.setMouseCursorVisible(false);
         window.setMouseCursorGrabbed(true);
-        sf::Vector2i prevMousePos = sf::Mouse::getPosition(window);
+        sf::Vector2i windowCenter(window.getSize().x / 2, window.getSize().y / 2);
+        sf::Mouse::setPosition(windowCenter, window);
+        sf::Vector2i prevMousePos = windowCenter;
 
 
     std::shared_ptr<Camera> camera(new Camera);
@@ -68,7 +70,8 @@ int main() {
                                 int dy = pos.y - prevMousePos.y;
                                 camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
                                 std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
-                                prevMousePos = pos;
+                                sf::Mouse::setPosition(windowCenter, window);
+                                prevMousePos = windowCenter;
                         }
                 }
 

@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Animator.h"
+#include "Camera.h"
+#include "Projection.h"
 
 class Enemy {
 public:
@@ -10,7 +12,7 @@ public:
     sf::Vector2f getPosition() const;
     void setVelocity(const sf::Vector2f &v) { velocity = v; }
     void update(float dt);
-    void draw(sf::RenderWindow &window);
+    void draw(sf::RenderWindow &window, const Camera &camera, float fovDeg);
     int getCurrentFrame() const { return animator.getFrame(); }
 
 private:
@@ -20,4 +22,5 @@ private:
     int frameHeight{64};
     Animator animator{4, 0.2f};
     sf::Vector2f velocity{0.f, 0.f};
+    sf::Vector2f position{0.f, 0.f};
 };

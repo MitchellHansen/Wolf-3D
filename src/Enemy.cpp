@@ -7,25 +7,34 @@ bool Enemy::load(const std::string &spriteSheetPath) {
         return false;
     sprite.setTexture(texture);
     sprite.setTextureRect(sf::IntRect(0, frameHeight, frameWidth, frameHeight));
-    sprite.setOrigin(frameWidth / 2.f, frameHeight / 2.f);
+    sprite.setOrigin(frameWidth / 2.f, frameHeight);
     return true;
 }
 
 void Enemy::setPosition(const sf::Vector2f &pos) {
-    sprite.setPosition(pos);
+    position = pos;
 }
 
 sf::Vector2f Enemy::getPosition() const {
-    return sprite.getPosition();
+    return position;
 }
 
 void Enemy::update(float dt) {
     animator.update(dt);
     sprite.setTextureRect(sf::IntRect(animator.getFrame() * frameWidth,
                                       frameHeight, frameWidth, frameHeight));
-    sprite.move(velocity * dt);
+    position += velocity * dt;
 }
 
-void Enemy::draw(sf::RenderWindow &window) {
+void Enemy::draw(sf::RenderWindow &window, const Camera &camera, float fovDeg) {
+    sf::Vector2f screenPos;
+    float scale;
+    if (!WorldToScreen(position, camera, fovDeg, window.getSize(), screenPos, scale))
+        return;
+    float baseSize = 150.f; // constant for on-screen scaling
+    float pixelSize = baseSize * scale;
+    sprite.setPosition(screenPos);
+    sprite.setScale(pixelSize / frameWidth, pixelSize / frameHeight);
+    sprite.setOrigin(frameWidth / 2.f, frameHeight);
     window.draw(sprite);
 }

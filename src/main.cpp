@@ -166,7 +166,7 @@ int main() {
 
                 for (auto &enemy : enemies) {
                     enemy.update(static_cast<float>(delta_time));
-                    enemy.draw(window);
+                    enemy.draw(window, *camera, 60.f);
                 }
 
                 fps.draw(&window);

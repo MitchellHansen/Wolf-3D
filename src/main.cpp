@@ -25,10 +25,8 @@ float elap_time() {
 }
 
 int main() {
-	
+
     std::mt19937 rng(time(NULL));
-    std::uniform_int_distribution<int> xdist(0, 800 - 64);
-    std::uniform_int_distribution<int> ydist(0, 800 - 64);
 
         sf::RenderWindow window(sf::VideoMode(800, 800), "Wolf-3D");
         window.setMouseCursorVisible(false);
@@ -52,11 +50,33 @@ int main() {
     raycaster.CreateViewport(sf::Vector2i(800, 800), sf::Vector2f(80.0f, 80.0f));
     raycaster.LoadTextures();
 
+    sf::Vector3i dims = map->getDimensions();
+    std::uniform_real_distribution<float> xdist(0.f, static_cast<float>(dims.x));
+    std::uniform_real_distribution<float> ydist(0.f, static_cast<float>(dims.y));
+    float scale = 800.f / static_cast<float>(std::max(dims.x, dims.y));
+
+    auto toScreen = [&](sf::Vector2f world){
+        return sf::Vector2f(world.x * scale, world.y * scale);
+    };
+
     std::vector<Enemy> enemies;
-    for (int i = 0; i < 5; ++i) {
+
+    // Spawn one enemy directly in front of the player
+    {
         Enemy e;
         e.load("assets/elite-guard.png");
-        e.setPosition(sf::Vector2f(xdist(rng), ydist(rng)));
+        sf::Vector3f camPos = camera->getPosition();
+        sf::Vector3f dir = camera->getDirectionCartesian();
+        sf::Vector2f wpos(camPos.x + dir.x * 2.f, camPos.y + dir.y * 2.f);
+        e.setPosition(toScreen(wpos));
+        enemies.push_back(e);
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        Enemy e;
+        e.load("assets/elite-guard.png");
+        sf::Vector2f wpos(xdist(rng), ydist(rng));
+        e.setPosition(toScreen(wpos));
         e.setVelocity(sf::Vector2f(20.f, 0.f));
         enemies.push_back(e);
     }

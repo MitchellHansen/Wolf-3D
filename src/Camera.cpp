@@ -8,8 +8,26 @@ Camera::~Camera(){
 
 }
 
-void Camera::giveImpulse(sf::Vector3f direction, float value){
-    movement_delta = direction * value;
+void Camera::giveImpulse(sf::Vector3f direction_local, float value){
+    // Convert local direction to world space using the camera yaw so that
+    // movement is relative to where the camera is facing. The direction vector
+    // provided here follows a conventional scheme where X is "strafe", Y is
+    // "forward" and Z is up.
+
+    float yaw = this->direction.y;
+
+    // Basis vectors for the camera in world coordinates (ignoring pitch for
+    // movement).
+    sf::Vector3f forward(std::cos(yaw), std::sin(yaw), 0.f);
+    sf::Vector3f right(forward.y, -forward.x, 0.f);
+    sf::Vector3f up(0.f, 0.f, 1.f);
+
+    sf::Vector3f world_dir = right * direction_local.x +
+                             forward * direction_local.y +
+                             up * direction_local.z;
+
+    // Accumulate movement so multiple keys can be pressed simultaneously.
+    movement_delta += world_dir * value;
 }
 
 void Camera::setPosition(sf::Vector3f position){

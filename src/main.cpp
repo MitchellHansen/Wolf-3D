@@ -32,6 +32,7 @@ int main() {
         window.setMouseCursorGrabbed(true);
         sf::Vector2i windowCenter(window.getSize().x / 2, window.getSize().y / 2);
         sf::Mouse::setPosition(windowCenter, window);
+        sf::Vector2i lastMousePos = sf::Mouse::getPosition(window);
 
 
     std::shared_ptr<Camera> camera(new Camera);
@@ -65,17 +66,16 @@ int main() {
                         }
                 }
 
-                // Process mouse movement relative to the window center. Using
-                // getPosition avoids spurious events from repositioning the
-                // cursor each frame.
+                // Measure mouse movement relative to the previous frame so
+                // stopping the mouse results in a zero delta.
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                int dx = mousePos.x - windowCenter.x;
-                int dy = mousePos.y - windowCenter.y;
+                int dx = mousePos.x - lastMousePos.x;
+                int dy = mousePos.y - lastMousePos.y;
                 if (dx != 0 || dy != 0) {
                         camera->moveDirection(sf::Vector2f(-dy * 0.0002f, -dx * 0.0002f));
                         std::cout << "Mouse delta: " << dx << "," << dy << std::endl;
-                        sf::Mouse::setPosition(windowCenter, window);
                 }
+                lastMousePos = mousePos;
 
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
                         camera->giveImpulse(sf::Vector3f(-0.0025f, 0, 0), 1.0);

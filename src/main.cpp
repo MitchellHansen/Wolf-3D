@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <chrono>
+#include <cmath>
 #include <Camera.h>
 #include <Map.h>
 #include <Raycaster.h>
@@ -37,7 +38,8 @@ int main() {
 
     std::shared_ptr<Camera> camera(new Camera);
     camera->setPosition(sf::Vector3f(3.1f, 3.1f, 3.1f));
-    camera->setDirection(sf::Vector2f(1.0f, 0.0f));
+    // face down the +X axis
+    camera->setDirection(sf::Vector2f(0.0f, 0.0f));
 
     Map *map = new Map;
 
@@ -61,8 +63,10 @@ int main() {
         Enemy e;
         e.load("assets/elite-guard.png");
         sf::Vector3f camPos = camera->getPosition();
-        sf::Vector3f dir = camera->getDirectionCartesian();
-        sf::Vector2f wpos(camPos.x + dir.x * 2.f, camPos.y + dir.y * 2.f);
+        float yaw = camera->getDirectionPolar().y;
+        sf::Vector2f forward(std::cos(yaw), std::sin(yaw));
+        sf::Vector2f wpos(camPos.x + forward.x * 2.f,
+                         camPos.y + forward.y * 2.f);
         e.setPosition(wpos);
         enemies.push_back(e);
     }

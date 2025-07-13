@@ -15,4 +15,6 @@ used as the wall texture by the raycaster.
 the four-frame walking animation used by the test enemy.
 
 The game spawns a few enemies each frame and projects their world
-coordinates to screen space so they appear in front of the camera.
+coordinates to screen space so they appear in front of the camera. The camera
+faces along the +X axis by default so the first enemy is positioned two units
+ahead based on the current yaw.
